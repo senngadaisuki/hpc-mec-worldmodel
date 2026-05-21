@@ -98,24 +98,14 @@ required.)
 
 ### Something-Something-V2 (SSv2)
 
-SSv2 is a third-party video dataset used for training and evaluation. Download and
+SSv2 is the main third-party video dataset used for training. Download and
 preprocess it following the [official instructions](https://www.qualcomm.com/developer/software/something-something-v-2-dataset),
 then place it under `./dataset/` (paths are configured in `train.py` / `test.py`).
 For citation and dataset background, see the original
 [Something-Something paper](https://arxiv.org/abs/1706.04261).
 
-### Other third-party datasets
-
-The repository also includes dataloader utilities for object-rotation datasets
-used in analysis and auxiliary experiments:
-
-- [COIL-100](https://www.cs.columbia.edu/CAVE/databases/SLAM_coil-20_coil-100/coil-100/):
-  Columbia Object Image Library with 100 objects photographed across 360-degree
-  rotations. The dataset is also documented in the
-  [TensorFlow Datasets catalog](https://tensorflow.google.cn/datasets/catalog/coil100).
-- [MIRO](https://github.com/kanezaki/MIRO/):
-  Multi-view Images of Rotated Objects, released with
-  [RotationNet](https://kanezaki.github.io/rotationnet/).
+Evaluation datasets and auxiliary benchmarks are described in the
+[Evaluation](#evaluation) section.
 
 ---
 
@@ -127,6 +117,7 @@ Pretrained weights: https://huggingface.co/senngadaisuki/hpc-mec-worldmodel
 huggingface-cli download senngadaisuki/hpc-mec-worldmodel \
   --local-dir ./checkpoints
 ```
+
 ---
 
 ## Training
@@ -144,11 +135,11 @@ accelerate launch --main_process_port 29600 train.py --phase 1 --num_epochs 10 -
   --work_dir ./checkpoints
 
 # Phase 2 — train the inverse & transition dynamics
-# change sliding_window will also inherently change batch size to 224 
+# With sliding_window=2, the training script uses an effective batch size of 224.
 accelerate launch --main_process_port 29600 train.py --phase 2 --num_epochs 10 --batch_size 32 --sliding_window 2\
   --work_dir ./checkpoints  --model_ckpt ./checkpoints/phase1_best_model/best.pth
 
-# Phase 3 — jointly finetuning the HPC-MEC coupling model and the inverse model
+# Phase 3 — jointly finetune the HPC-MEC coupling model and the inverse model
 accelerate launch --main_process_port 29600 train.py --phase 3 --num_epochs 10 --batch_size 32 --sliding_window 8\
   --work_dir ./checkpoints --model_ckpt ./checkpoints/phase2_best_model/best.pth
 ```
