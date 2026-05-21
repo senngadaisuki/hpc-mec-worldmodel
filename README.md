@@ -38,7 +38,7 @@ prediction and zero-shot structural transfer across objects and scenes.
 - **MEC** (medial entorhinal cortex) maintains compact relational structure and performs CANN-inspired path integration.
 - **Inverse model** infers low-dimensional, content-free latent transitions between consecutive MEC states.
 
-Video frames are embedded with a pretrained multi-scale VQ-VAE (from
+Video frames are embedded with a pretrained visual encoder (from
 [VAR](https://github.com/FoundationVision/VAR)). Training proceeds in 3 phases:
 Phase 1 (HPC-MEC representation learning) -> Phase 2 (latent transition learning) -> Phase 3 (end-to-end finetuning).
 
