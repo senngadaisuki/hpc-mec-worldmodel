@@ -84,14 +84,6 @@ mkdir -p VAR/checkpoints
 wget -P VAR/checkpoints https://huggingface.co/FoundationVision/var/resolve/main/vae_ch160v4096z32.pth
 ```
 
-This checkpoint (`vae_ch160v4096z32.pth`) is also downloaded automatically into
-`VAR/checkpoints/` on the first run of `train.py` / `test.py`, so this manual
-step is optional. (Only the VQ-VAE tokenizer is needed — `var_d16.pth` is **not**
-required.)
-
-> **Run all scripts from the repository root** (the directory containing `train.py`)
-> so the relative `VAR/checkpoints/...` paths resolve correctly.
-
 ---
 
 ## Data preparation
@@ -131,16 +123,16 @@ accelerate config
 
 ```bash
 # Phase 1 — train HPC + MEC encoding & decoding
-accelerate launch --main_process_port 29600 train.py --phase 1 --num_epochs 10 --batch_size 32 --sliding_window 8\
+accelerate launch train.py --phase 1 --num_epochs 10 --batch_size 32 --sliding_window 8\
   --work_dir ./checkpoints
 
 # Phase 2 — train the inverse & transition dynamics
 # With sliding_window=2, the training script uses an effective batch size of 224.
-accelerate launch --main_process_port 29600 train.py --phase 2 --num_epochs 10 --batch_size 32 --sliding_window 2\
+accelerate launch train.py --phase 2 --num_epochs 10 --batch_size 32 --sliding_window 2\
   --work_dir ./checkpoints  --model_ckpt ./checkpoints/phase1_best_model/best.pth
 
 # Phase 3 — jointly finetune the HPC-MEC coupling model and the inverse model
-accelerate launch --main_process_port 29600 train.py --phase 3 --num_epochs 10 --batch_size 32 --sliding_window 8\
+accelerate launch train.py --phase 3 --num_epochs 10 --batch_size 32 --sliding_window 8\
   --work_dir ./checkpoints --model_ckpt ./checkpoints/phase2_best_model/best.pth
 ```
 
