@@ -90,11 +90,11 @@ wget -P VAR/checkpoints https://huggingface.co/FoundationVision/var/resolve/main
 
 ### Something-Something-V2 (SSv2)
 
-SSv2 is the main third-party video dataset used for training. Download and
+[SSv2](https://arxiv.org/abs/1706.04261) is the main third-party video dataset used for training, it is a large-scale human activity
+video dataset including complex interactions with objects
+without explicit action labels. Download and
 preprocess it following the [official instructions](https://www.qualcomm.com/developer/software/something-something-v-2-dataset),
 then place it under `./dataset/` (paths are configured in `train.py` / `test.py`).
-For citation and dataset background, see the original
-[Something-Something paper](https://arxiv.org/abs/1706.04261).
 
 Evaluation datasets and auxiliary benchmarks are described in the
 [Evaluation](#evaluation) section.
