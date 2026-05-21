@@ -1,0 +1,23 @@
+# Python >=3.10; tested by the authors with Python 3.12.
+#
+# For CUDA-specific PyTorch wheels, install torch/torchvision from
+# https://pytorch.org/get-started/locally/ if your cluster requires a
+# particular CUDA build.
+torch==2.9.0
+torchvision==0.24.0
+
+accelerate==1.4.0
+wandb==0.19.2
+
+numpy==2.2.1
+Pillow==11.1.0
+tqdm==4.66.5
+einops>=0.7.0
+beartype>=0.18.0
+matplotlib>=3.8.0
+
+huggingface_hub>=0.23.0
+transformers>=4.40.0
+pytz>=2024.1
+tensorboard>=2.16.0
+typed-argument-parser>=1.10.0
