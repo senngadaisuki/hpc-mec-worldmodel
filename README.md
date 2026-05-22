@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://ztqakita.github.io/">Tianqiu Zhang</a><sup>*</sup> &nbsp;·&nbsp;
-  <a href="https://senngadaisuki.github.io/">Muyang Lyu<sup>*</sup> &nbsp;·&nbsp;
+  <a href="https://senngadaisuki.github.io/">Muyang Lyu</a><sup>*</sup> &nbsp;·&nbsp;
   Xiao Liu &nbsp;·&nbsp;
   <a href="https://www.psy.pku.edu.cn/english/people/faculty/professor/wusi/index.htm">Si Wu</a>
 </p>
