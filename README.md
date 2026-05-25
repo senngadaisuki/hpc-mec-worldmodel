@@ -1,4 +1,7 @@
-# Code for ICML 2026 paper "Structure Abstraction and Generalization in a Hippocampal-Entorhinal Inspired World Model"
+# Structure Abstraction and Generalization in a Hippocampal-Entorhinal Inspired World Model
+
+Official code for the ICML 2026 paper **"Structure Abstraction and
+Generalization in a Hippocampal-Entorhinal Inspired World Model."**
 
 <p align="center">
   <a href="https://hpc-mec-worldmodel.github.io/"><img src="https://img.shields.io/badge/Project-Page-blue" alt="Project Page"></a>
@@ -20,27 +23,32 @@
   <img src="assets/teaser.png" width="95%" alt="HPC-MEC world model architecture">
 </p>
 <p align="center">
-  <em>Hierarchical HPC–MEC world model: (A) visual encoder/decoder with HPC and MEC
-  embeddings, (B) CANN-based forward model with velocity-like path integration,
-  (C) inverse model extracting content-free latent transitions.</em>
+  <em>Hierarchical HPC–MEC world model: (A) visual encoding/decoding with HPC
+  and MEC embeddings, (B) a CANN-based forward model with velocity-like path
+  integration, and (C) an inverse model that extracts content-free latent
+  transitions.</em>
 </p>
 
 ---
 
 ## Overview
 
-A hippocampal-entorhinal inspired world model for learning reusable transition
-structures from observation-only videos. The model **dissociates visual content
-from abstract dynamics**, then uses velocity-like latent transitions for
-prediction and zero-shot structural transfer across objects and scenes.
+This repository implements a hippocampal-entorhinal inspired world model for
+learning reusable transition structure from observation-only videos. The model
+**dissociates visual content from abstract dynamics** and uses velocity-like
+latent transitions for prediction and zero-shot structural transfer across
+objects and scenes.
 
 - **HPC** (hippocampus) binds content-rich episodic scene representations.
-- **MEC** (medial entorhinal cortex) maintains compact relational structure and performs CANN-inspired path integration.
-- **Inverse model** infers low-dimensional, content-free latent transitions between consecutive MEC states.
+- **MEC** (medial entorhinal cortex) maintains compact relational structure and
+  performs CANN-inspired path integration.
+- **Inverse model** infers low-dimensional, content-free latent transitions
+  between consecutive MEC states.
 
-Video frames are embedded with a pretrained visual encoder (from
-[VAR](https://github.com/FoundationVision/VAR)). Training proceeds in 3 phases:
-Phase 1 (HPC-MEC representation learning) -> Phase 2 (latent transition learning) -> Phase 3 (end-to-end finetuning).
+Video frames are embedded with a pretrained visual encoder from
+[VAR](https://github.com/FoundationVision/VAR). Training proceeds in three
+phases: Phase 1 (HPC-MEC representation learning), Phase 2 (latent transition
+learning), and Phase 3 (end-to-end finetuning).
 
 > See the [paper](https://arxiv.org/abs/2605.15733) and the
 > [project page](https://hpc-mec-worldmodel.github.io/) for the full method and results.
@@ -90,11 +98,27 @@ wget -P VAR/checkpoints https://huggingface.co/FoundationVision/var/resolve/main
 
 ### Something-Something-V2 (SSv2)
 
-[SSv2](https://arxiv.org/abs/1706.04261) is the main third-party video dataset used for training, it is a large-scale human activity
-video dataset including complex interactions with objects
-without explicit action labels. Download and
-preprocess it following the [official instructions](https://www.qualcomm.com/developer/software/something-something-v-2-dataset),
-then place it under `./dataset/` (paths are configured in `train.py` / `test.py`).
+[SSv2](https://arxiv.org/abs/1706.04261) is the main third-party video dataset
+used for training. It is a large-scale human activity dataset covering complex
+object interactions without explicit action labels. Download and preprocess it
+following the [official instructions](https://www.qualcomm.com/developer/software/something-something-v-2-dataset),
+then place it under `./dataset/` (the default paths are configured in
+`train.py` and `test.py`).
+
+For faster PyTorch dataloading, this repository expects SSv2 to be extracted
+into per-frame image folders:
+
+```text
+dataset/20bn-something-something-v2/rawframes/
+  {video_id}/
+    img_00001.jpg
+    img_00002.jpg
+    ...
+dataset/labels/
+  train.json
+  validation.json
+  test.json
+```
 
 Evaluation datasets and auxiliary benchmarks are described in the
 [Evaluation](#evaluation) section.
@@ -114,7 +138,8 @@ huggingface-cli download senngadaisuki/hpc-mec-worldmodel \
 
 ## Training
 
-Training uses 🤗 `accelerate` (multi-GPU / mixed precision) and is split into 3 phases.
+Training uses 🤗 `accelerate` for multi-GPU and mixed-precision runs, and is
+split into three phases.
 
 ```bash
 # One-time accelerate setup (multi-GPU / mixed precision)
@@ -123,16 +148,16 @@ accelerate config
 
 ```bash
 # Phase 1 — train HPC + MEC encoding & decoding
-accelerate launch train.py --phase 1 --num_epochs 10 --batch_size 32 --sliding_window 8\
+accelerate launch train.py --phase 1 --num_epochs 10 --batch_size 32 --sliding_window 8 \
   --work_dir ./checkpoints
 
 # Phase 2 — train the inverse & transition dynamics
 # With sliding_window=2, the training script uses an effective batch size of 224.
-accelerate launch train.py --phase 2 --num_epochs 10 --batch_size 32 --sliding_window 2\
-  --work_dir ./checkpoints  --model_ckpt ./checkpoints/phase1_best_model/best.pth
+accelerate launch train.py --phase 2 --num_epochs 10 --batch_size 32 --sliding_window 2 \
+  --work_dir ./checkpoints --model_ckpt ./checkpoints/phase1_best_model/best.pth
 
 # Phase 3 — jointly finetune the HPC-MEC coupling model and the inverse model
-accelerate launch train.py --phase 3 --num_epochs 10 --batch_size 32 --sliding_window 8\
+accelerate launch train.py --phase 3 --num_epochs 10 --batch_size 32 --sliding_window 8 \
   --work_dir ./checkpoints --model_ckpt ./checkpoints/phase2_best_model/best.pth
 ```
 
@@ -152,9 +177,7 @@ python test.py --model_ckpt ./checkpoints/model.pth
 
 ### Notebook
 
-For interactive visualization and evaluation, run
-**[`test.ipynb`](test.ipynb)**.
-
+For interactive visualization and evaluation, run **[`test.ipynb`](test.ipynb)**.
 
 ### Omni-Primitive-Transforms (our evaluation benchmark)
 
@@ -167,7 +190,7 @@ scaling, rendered from high-quality scanned meshes from
 
 The Hugging Face dataset repository provides both the rendered data used in our
 experiments and the rendering/generation code for creating the dataset. It is
-**optional and used for evaluation only** — it is not required for SSv2 training.
+**optional and used for evaluation only**; it is not required for SSv2 training.
 
 ```bash
 huggingface-cli download senngadaisuki/omni-primitive-transforms \
