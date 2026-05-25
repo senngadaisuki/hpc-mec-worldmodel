@@ -125,17 +125,6 @@ Evaluation datasets and auxiliary benchmarks are described in the
 
 ---
 
-## Checkpoints
-
-Pretrained weights: https://huggingface.co/senngadaisuki/hpc-mec-worldmodel
-
-```bash
-huggingface-cli download senngadaisuki/hpc-mec-worldmodel \
-  --local-dir ./checkpoints
-```
-
----
-
 ## Training
 
 Training uses 🤗 `accelerate` for multi-GPU and mixed-precision runs, and is
@@ -168,6 +157,15 @@ Checkpoints are saved as `phase{N}_best_model/best.pth` and
 ---
 
 ## Evaluation
+
+### Checkpoints
+
+Pretrained weights: https://huggingface.co/senngadaisuki/hpc-mec-worldmodel
+
+```bash
+huggingface-cli download senngadaisuki/hpc-mec-worldmodel \
+  --local-dir ./checkpoints
+```
 
 ### Quick test script
 
